@@ -113,9 +113,20 @@ export function retentionYearsOf(text: string | undefined): number | undefined {
   return undefined
 }
 
-/** True when a section has real content. */
-function filled(value: string | undefined): boolean {
-  return value !== undefined && value.trim().length >= 10
+/**
+ * True when a section has real content. A scaffold prompt is a placeholder,
+ * not an answer: treating it as filled would let `dmp_scaffold` satisfy its own
+ * completeness check.
+ */
+function filledSection(key: keyof PlanSections, value: string | undefined): boolean {
+  if (value === undefined) return false
+  const trimmed = value.trim()
+  return trimmed.length >= 10 && trimmed !== SECTION_PROMPTS[key]
+}
+
+/** True for a non-empty string (empty strings do not satisfy a field). */
+function hasText(value: string | undefined): value is string {
+  return value !== undefined && value.trim() !== ''
 }
 
 /**
@@ -129,7 +140,7 @@ export function checkPlan(plan: DmpPlan, options: { minRetentionYears?: number }
   const issues: DmpIssue[] = []
   let present = 0
   for (const section of REQUIRED_SECTIONS) {
-    if (filled(plan.sections[section.key])) present += 1
+    if (filledSection(section.key, plan.sections[section.key])) present += 1
     else {
       issues.push({
         code: `missing_${section.key}`,
@@ -146,31 +157,32 @@ export function checkPlan(plan: DmpPlan, options: { minRetentionYears?: number }
   }
   const personal = datasets.filter(dataset => dataset.containsPersonalData === true)
   if (personal.length > 0) {
-    if (!filled(plan.sections.security)) issues.push({ code: 'personal_data_without_security', severity: 'error', detail: 'personal data is listed but no security section is filled', suggestion: SECTION_PROMPTS.security })
-    if (!filled(plan.sections.legal)) issues.push({ code: 'personal_data_without_legal', severity: 'error', detail: 'personal data is listed but no legal/ethics basis is given', suggestion: SECTION_PROMPTS.legal })
+    if (!filledSection('security', plan.sections.security)) issues.push({ code: 'personal_data_without_security', severity: 'error', detail: 'personal data is listed but no security section is filled', suggestion: SECTION_PROMPTS.security })
+    if (!filledSection('legal', plan.sections.legal)) issues.push({ code: 'personal_data_without_legal', severity: 'error', detail: 'personal data is listed but no legal/ethics basis is given', suggestion: SECTION_PROMPTS.legal })
     const sharing = (plan.sections.sharing ?? '').toLowerCase()
-    if (/\bopen(ly)?\b|public|公开/iu.test(sharing) && !/de-identif|anonym|pseudonym|aggregat|access control|restricted|受控|去标识|匿名/iu.test(sharing)) {
+    // `public` must be a word: "publication in a journal" is not open sharing.
+    if (/\bopen(?:ly)?\b|\bpublic(?:ly)?\b|公开/iu.test(sharing) && !/de-identif|anonym|pseudonym|aggregat|access control|restricted|受控|去标识|匿名/iu.test(sharing)) {
       issues.push({ code: 'open_sharing_of_personal_data', severity: 'error', detail: 'the plan proposes open sharing but lists personal data without de-identification or a restricted-access route', suggestion: 'share only de-identified data openly; use a controlled-access repository for personal data' })
     }
   }
   for (const dataset of datasets) {
-    if (dataset.repository === undefined && !/not shared|restricted|不可共享|不共享/iu.test(plan.sections.sharing ?? '')) {
+    if (!hasText(dataset.repository) && !/not shared|restricted|不可共享|不共享/iu.test(plan.sections.sharing ?? '')) {
       issues.push({ code: 'dataset_without_repository', severity: 'warning', detail: `dataset "${dataset.name}" has no repository`, suggestion: 'name the repository (or state why the dataset cannot be shared)' })
     }
-    if (dataset.persistentId === undefined) issues.push({ code: 'dataset_without_persistent_id', severity: 'info', detail: `dataset "${dataset.name}" has no persistent identifier (DOI)`, suggestion: 'mint a DOI when the dataset is published' })
-    if (dataset.license === undefined) issues.push({ code: 'dataset_without_license', severity: 'warning', detail: `dataset "${dataset.name}" has no license`, suggestion: 'state a license (e.g. CC BY 4.0) or the access conditions' })
+    if (!hasText(dataset.persistentId)) issues.push({ code: 'dataset_without_persistent_id', severity: 'info', detail: `dataset "${dataset.name}" has no persistent identifier (DOI)`, suggestion: 'mint a DOI when the dataset is published' })
+    if (!hasText(dataset.license)) issues.push({ code: 'dataset_without_license', severity: 'warning', detail: `dataset "${dataset.name}" has no license`, suggestion: 'state a license (e.g. CC BY 4.0) or the access conditions' })
   }
   const retentionYears = retentionYearsOf(plan.sections.retention)
-  if (plan.sections.retention !== undefined && filled(plan.sections.retention) && retentionYears === undefined) {
+  if (filledSection('retention', plan.sections.retention) && retentionYears === undefined) {
     issues.push({ code: 'retention_unparseable', severity: 'warning', detail: 'no retention period in years could be parsed from the retention section', suggestion: 'state an explicit number of years (e.g. "10 years after publication")' })
   } else if (retentionYears !== undefined && retentionYears < minRetention) {
     issues.push({ code: 'retention_below_minimum', severity: 'warning', detail: `the stated retention (${retentionYears} years) is below the configured minimum (${minRetention} years)`, suggestion: `confirm the funder/institution minimum; the default here is ${minRetention} years and must be verified against the call` })
   }
-  if (filled(plan.sections.storage) && !/backup|备份|replicat|snapshot|version/iu.test(plan.sections.storage ?? '')) {
+  if (filledSection('storage', plan.sections.storage) && !/backup|备份|replicat|snapshot|version/iu.test(plan.sections.storage ?? '')) {
     issues.push({ code: 'storage_without_backup', severity: 'warning', detail: 'the storage section does not mention backup or versioning', suggestion: 'state the backup schedule and who verifies restores' })
   }
-  if (!filled(plan.sections.costs)) issues.push({ code: 'no_costs', severity: 'info', detail: 'no cost section', suggestion: SECTION_PROMPTS.costs })
-  if (plan.project.contact === undefined) issues.push({ code: 'no_contact', severity: 'warning', detail: 'no data-management contact is named', suggestion: 'name a data steward or contact person' })
+  if (!filledSection('costs', plan.sections.costs)) issues.push({ code: 'no_costs', severity: 'info', detail: 'no cost section', suggestion: SECTION_PROMPTS.costs })
+  if (!hasText(plan.project.contact)) issues.push({ code: 'no_contact', severity: 'warning', detail: 'no data-management contact is named', suggestion: 'name a data steward or contact person' })
   return {
     complete: !issues.some(issue => issue.severity === 'error'),
     coverage,

@@ -67,6 +67,41 @@ describe('check', () => {
     expect(result.issues.map(issue => issue.code)).toEqual(expect.arrayContaining(['missing_sharing', 'retention_below_minimum', 'storage_without_backup']))
   })
 
+  it('does not treat scaffold prompts as filled sections', () => {
+    const scaffolded = scaffoldPlan({
+      title: 'Prompt-only project',
+      contact: 'data@example.org',
+      datasets: [{ name: 'survey.csv', type: 'tabular', repository: 'Zenodo', license: 'CC BY 4.0', persistentId: '10.1/x' }],
+    })
+    const result = checkPlan(scaffolded)
+    expect(result.complete).toBe(false)
+    expect(result.coverage).toBe(0)
+    expect(result.issues.map(issue => issue.code)).toEqual(
+      expect.arrayContaining(['missing_dataDescription', 'missing_sharing', 'missing_retention']),
+    )
+  })
+
+  it('does not read a journal publication as open sharing', () => {
+    const plan = completePlan()
+    const personal: DmpPlan = {
+      ...plan,
+      datasets: [{ ...plan.datasets![0]!, containsPersonalData: true }],
+      sections: { ...plan.sections, sharing: 'Publication in a journal after the project ends.' },
+    }
+    expect(checkPlan(personal).issues.map(issue => issue.code)).not.toContain('open_sharing_of_personal_data')
+  })
+
+  it('treats empty dataset fields and contact as missing', () => {
+    const plan = completePlan()
+    const messy: DmpPlan = {
+      ...plan,
+      project: { title: 'No contact', contact: '   ' },
+      datasets: [{ name: 'raw', type: 'text', repository: '', license: ' ', persistentId: '' }],
+    }
+    const codes = checkPlan(messy).issues.map(issue => issue.code)
+    expect(codes).toEqual(expect.arrayContaining(['dataset_without_repository', 'dataset_without_license', 'dataset_without_persistent_id', 'no_contact']))
+  })
+
   it('refuses open sharing of personal data without de-identification', () => {
     const plan = completePlan()
     const withPersonal: DmpPlan = {

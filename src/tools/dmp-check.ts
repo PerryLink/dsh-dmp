@@ -6,7 +6,7 @@
 import { defineTool } from '@deepseek-ai/dsh-tools'
 import { checkPlan, type DmpPlan } from '../plan.ts'
 import type { ResolvedConfig } from '../config.ts'
-import { ERROR_SCHEMA } from './shared.ts'
+import { ERROR_SCHEMA, asPlan, planProblem, retentionProblem } from './shared.ts'
 
 const OUTPUT_SCHEMA = {
   type: 'object',
@@ -45,13 +45,21 @@ export function makeDmpCheckTool(config: ResolvedConfig) {
       },
     },
     async execute(args: unknown) {
-      const request = args as { plan?: DmpPlan; minRetentionYears?: number }
-      if (request.plan === undefined || request.plan.sections === undefined) {
+      if (typeof args !== 'object' || args === null) {
         return { ok: false as const, error: { code: 'INVALID_INPUT', message: 'pass the plan object from dmp_scaffold' } }
+      }
+      const request = args as { plan?: DmpPlan; minRetentionYears?: number }
+      const problem = planProblem(request.plan)
+      if (problem !== undefined) {
+        return { ok: false as const, error: { code: 'INVALID_INPUT', message: `pass the plan object from dmp_scaffold (${problem})` } }
+      }
+      const retentionIssue = retentionProblem(request.minRetentionYears)
+      if (retentionIssue !== undefined) {
+        return { ok: false as const, error: { code: 'INVALID_INPUT', message: retentionIssue } }
       }
       return {
         ok: true as const,
-        check: checkPlan(request.plan, { minRetentionYears: request.minRetentionYears ?? config.minRetentionYears }) as never,
+        check: checkPlan(asPlan(request.plan), { minRetentionYears: request.minRetentionYears ?? config.minRetentionYears }) as never,
       }
     },
   })

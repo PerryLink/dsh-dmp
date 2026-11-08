@@ -5,7 +5,7 @@
 
 import { defineTool } from '@deepseek-ai/dsh-tools'
 import { scaffoldPlan, type DatasetEntry } from '../plan.ts'
-import { ERROR_SCHEMA } from './shared.ts'
+import { ERROR_SCHEMA, planProblem } from './shared.ts'
 
 const OUTPUT_SCHEMA = {
   type: 'object',
@@ -46,8 +46,14 @@ export function makeDmpScaffoldTool() {
       },
     },
     async execute(args: unknown) {
+      if (typeof args !== 'object' || args === null) {
+        return { ok: false as const, error: { code: 'INVALID_INPUT', message: 'pass an object with optional title/funder/datasets fields' } }
+      }
       const request = args as { title?: string; funder?: string; grantId?: string; institution?: string; contact?: string; datasets?: DatasetEntry[] }
-      return { ok: true as const, plan: scaffoldPlan(request) as never }
+      const plan = scaffoldPlan(request)
+      const problem = planProblem(plan)
+      if (problem !== undefined) return { ok: false as const, error: { code: 'INVALID_INPUT', message: problem } }
+      return { ok: true as const, plan: plan as never }
     },
   })
 }

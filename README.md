@@ -96,7 +96,7 @@ dsh --profile <name> --dump-config | grep dsh-dmp
 
 ## Evaluation
 
-**10 tests**: scaffold (10 prompt sections), retention parsing (years, Chinese 年, months, unparseable), complete plan accepted, missing sections/retention/backup flagged, open-sharing-of-personal-data conflict, missing repository/licence/contact, tool schemas, scaffold→check→export end to end, failure branches, package contract.
+**14 tests**: scaffold (10 prompt sections), retention parsing (years, Chinese 年, months, unparseable), complete plan accepted, missing sections/retention/backup flagged, open-sharing-of-personal-data conflict, a journal publication not mistaken for open sharing, prompt-only scaffolds not counted as complete, empty dataset fields/contact treated as missing, malformed-plan and retention-override guards, tool schemas, scaffold→check→export end to end, failure branches, package contract.
 
 No benchmark is claimed: these are structural checks on a JSON document, pinned by fixtures.
 
@@ -106,6 +106,7 @@ No benchmark is claimed: these are structural checks on a JSON document, pinned 
 - Only English/Chinese cue words for open sharing and de-identification.
 - No funder-specific templates, no export to DOCX/PDF.
 - Retention minimum is a scaffold default, not a funder rule.
+- Scaffold prompts are placeholders: `dmp_check` treats them as missing until replaced with project text.
 
 ## License
 

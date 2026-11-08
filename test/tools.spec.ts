@@ -65,11 +65,28 @@ describe('tools', () => {
     expect(exported.sarif.version).toBe('2.1.0')
   })
 
+  it('checks a prompt-only scaffold as incomplete', async () => {
+    const scaffolded = (await makeDmpScaffoldTool().execute({ title: 'T', contact: 'a@b.c' }, EXEC)) as { ok: true; plan: DmpPlan }
+    const checked = (await makeDmpCheckTool(CONFIG).execute({ plan: scaffolded.plan }, EXEC)) as { ok: true; check: { complete: boolean; coverage: number } }
+    expect(checked.check.complete).toBe(false)
+    expect(checked.check.coverage).toBeLessThan(1)
+  })
+
   it('failure branches carry stable codes', async () => {
-    const missing = (await makeDmpCheckTool(CONFIG).execute({ plan: {} }, EXEC)) as { ok: false; error: { code: string } }
-    expect(missing.error.code).toBe('INVALID_INPUT')
+    for (const args of [
+      { plan: {} },
+      { plan: { sections: {} } },
+      { plan: { sections: {}, project: { title: 'T' }, datasets: [null] } },
+      { plan: { sections: { dataDescription: 42 }, project: { title: 'T' } } },
+      { plan: { sections: {}, project: { title: 'T' } }, minRetentionYears: -1 },
+    ]) {
+      const check = (await makeDmpCheckTool(CONFIG).execute(args, EXEC)) as { ok: false; error: { code: string } }
+      expect(check.error.code).toBe('INVALID_INPUT')
+    }
     const noExport = (await makeDmpExportTool(CONFIG).execute({ plan: {} }, EXEC)) as { ok: false; error: { code: string } }
     expect(noExport.error.code).toBe('INVALID_INPUT')
+    const badScaffold = (await makeDmpScaffoldTool().execute({ datasets: [null] }, EXEC)) as { ok: false; error: { code: string } }
+    expect(badScaffold.error.code).toBe('INVALID_INPUT')
   })
 })
 

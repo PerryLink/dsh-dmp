@@ -8,7 +8,7 @@ import { checkPlan, type DmpPlan } from '../plan.ts'
 import { renderCheckSarif, renderPlanMarkdown } from '../report.ts'
 import type { ResolvedConfig } from '../config.ts'
 import { VERSION } from '../version.ts'
-import { ERROR_SCHEMA } from './shared.ts'
+import { ERROR_SCHEMA, asPlan, planProblem, retentionProblem } from './shared.ts'
 
 const OUTPUT_SCHEMA = {
   type: 'object',
@@ -48,14 +48,23 @@ export function makeDmpExportTool(config: ResolvedConfig) {
       },
     },
     async execute(args: unknown) {
-      const request = args as { plan?: DmpPlan; minRetentionYears?: number }
-      if (request.plan === undefined || request.plan.sections === undefined) {
+      if (typeof args !== 'object' || args === null) {
         return { ok: false as const, error: { code: 'INVALID_INPUT', message: 'pass the plan object' } }
       }
-      const check = checkPlan(request.plan, { minRetentionYears: request.minRetentionYears ?? config.minRetentionYears })
+      const request = args as { plan?: DmpPlan; minRetentionYears?: number }
+      const problem = planProblem(request.plan)
+      if (problem !== undefined) {
+        return { ok: false as const, error: { code: 'INVALID_INPUT', message: `pass the plan object (${problem})` } }
+      }
+      const retentionIssue = retentionProblem(request.minRetentionYears)
+      if (retentionIssue !== undefined) {
+        return { ok: false as const, error: { code: 'INVALID_INPUT', message: retentionIssue } }
+      }
+      const plan = asPlan(request.plan)
+      const check = checkPlan(plan, { minRetentionYears: request.minRetentionYears ?? config.minRetentionYears })
       return {
         ok: true as const,
-        markdown: renderPlanMarkdown(request.plan, check),
+        markdown: renderPlanMarkdown(plan, check),
         check: check as never,
         sarif: renderCheckSarif(check, VERSION) as never,
       }
