@@ -1,0 +1,12 @@
+# dsh-dmp bundle patch: mount the data-management-plan tools.
+#
+# Every key below is a Config field (Schemastery schema); invalid values fail the
+# profile load loudly. Pure local documents: no network, no file writes.
+- insert:
+    - id: dsh-dmp
+      name: dsh-dmp
+      config:
+        enabled: true
+        # Default minimum retention in years. This is a scaffold default, NOT a
+        # funder rule: verify the current call/institutional policy.
+        minRetentionYears: 5
