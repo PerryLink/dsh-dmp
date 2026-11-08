@@ -1,8 +1,8 @@
 {
   "name": "dsh-dmp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Data-management-plan tooling for DeepSeek Harness: a ten-section scaffold with prompts, completeness/consistency checks (datasets, personal data, open-sharing conflicts, retention minimum, backup, repository/license/DOI, contact), Markdown/JSON/SARIF export. Checks are internal consistency checks, not funder-template certification; no network, no file writes.",
-  "author": "dsh-dmp contributors",
+  "author": "PerryLink contributors",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/PerryLink/dsh-dmp.git"
@@ -29,7 +29,9 @@
     "CHANGELOG.md",
     "README.md",
     "README-zh.md",
-    "LICENSE"
+    "LICENSE",
+    "SECURITY.md",
+    "THIRD_PARTY_NOTICES.md"
   ],
   "sideEffects": false,
   "dsh": {
