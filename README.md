@@ -82,6 +82,9 @@ dsh plugin --profile <name> add @perrylink/dsh-research-core dsh-dmp
 dsh --profile <name> --dump-config | grep dsh-dmp
 ```
 
+
+> **Family-wide peer note:** `@perrylink/dsh-research-core` is declared as a peer for a single, uniform install contract across the research family, even though this package does not import it at runtime.
+
 ## Configuration
 
 | Key | Default | Meaning |
