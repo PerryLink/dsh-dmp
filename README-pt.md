@@ -121,7 +121,7 @@ dsh --profile <name> --dump-config | grep dsh-dmp
 *Animado: a saída verbose real de `pnpm exec vitest run test/plan.spec.ts` sobre os fixtures do plano (sem rede; reexecutado em 2026-11-21). As marcas de aprovação foram omitidas porque a fonte do terminal não tem o glifo de check; os nomes dos casos e as linhas de resumo são literais.*
 
 
-**14 testes**: estrutura (10 seções com prompts), análise de retenção (anos, 年 chinês, meses, não analisável), plano completo aceito, seções/retenção/backup ausentes sinalizados, conflito de compartilhamento aberto de dados pessoais, publicação em periódico que não é confundida com compartilhamento aberto, estruturas só com prompts não contadas como completas, campos de conjunto de dados/contato vazios tratados como ausentes, proteções contra planos malformados e substituição de retenção, esquemas de ferramentas, scaffold→check→export de ponta a ponta, ramos de falha e contrato do pacote.
+**15 testes**: estrutura (10 seções com prompts), análise de retenção (anos, 年 chinês, meses, não analisável), plano completo aceito, seções/retenção/backup ausentes sinalizados, conflito de compartilhamento aberto de dados pessoais, publicação em periódico que não é confundida com compartilhamento aberto, estruturas só com prompts não contadas como completas, campos de conjunto de dados/contato vazios tratados como ausentes, proteções contra planos malformados e substituição de retenção, esquemas de ferramentas, scaffold→check→export de ponta a ponta, ramos de falha e contrato do pacote.
 
 Nenhum benchmark é reivindicado: são verificações estruturais sobre um documento JSON, fixadas por fixtures.
 
