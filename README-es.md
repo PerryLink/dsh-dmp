@@ -11,6 +11,8 @@
 
 *Andamiaje de diez secciones con indicaciones, comprobaciones de completitud y coherencia (datos personales frente a compartir en abierto, retención mínima, copia de seguridad, repositorio/licencia/DOI), y una exportación Markdown que puedes pegar en el formulario del financiador.*
 
+Última verificación: DeepSeek Harness `dsh-v0.2.3-alpha.1` (2026-11-22).
+
 [English](README.md) · [简体中文](README-zh.md) · [Español](README-es.md) · [Português](README-pt.md) · [हिन्दी](README-hi.md)
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
@@ -25,7 +27,6 @@
 - **`dmp_scaffold`** — devuelve las diez secciones (descripción de los datos, recogida, documentación, almacenamiento/copia de seguridad, seguridad, compartición, retención, roles, base legal, costes) rellenas con **indicaciones**, no con contenido inventado del proyecto, más entradas opcionales de conjuntos de datos.
 - **`dmp_check`** — completitud (10 secciones), cobertura de conjuntos de datos (repositorio, licencia, DOI), coherencia de datos personales (se exigen seguridad y base legal; compartir en abierto sin desidentificación es un error), retención por debajo del mínimo configurado, almacenamiento sin copia de seguridad, contacto ausente.
 - **`dmp_export`** — Markdown (identidad, tabla de conjuntos de datos, secciones, tabla de problemas) + comprobación JSON + SARIF 2.1.0.
-
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-dmp-flow-v5-dark.svg">
@@ -99,7 +100,6 @@ dsh plugin --profile <name> add @perrylink/dsh-research-core dsh-dmp
 dsh --profile <name> --dump-config | grep dsh-dmp
 ```
 
-
 > **Nota de peer para toda la familia:** `@perrylink/dsh-research-core` se declara como peer para un contrato de instalación único y uniforme en toda la familia de investigación, aunque este paquete no lo importe en tiempo de ejecución.
 
 ## Configuración
@@ -119,7 +119,6 @@ dsh --profile <name> --dump-config | grep dsh-dmp
 ![dsh-dmp pruebas: una ejecución real de la spec de plan/comprobación — nueve casos que cubren el andamiaje de diez secciones, el análisis de retención, un plan completo, secciones ausentes y el conflicto de compartir en abierto](docs/assets/dsh-dmp-demo.gif)
 
 *Animado: la salida verbose real de `pnpm exec vitest run test/plan.spec.ts` sobre los fixtures del plan (sin red; reejecutado el 2026-11-21). Se omiten las marcas de aprobado porque la fuente del terminal no tiene el glifo de la marca de verificación; los nombres de los casos y las líneas de resumen son literales.*
-
 
 **15 pruebas**: andamiaje (10 secciones con indicaciones), análisis de retención (años, 年 chino, meses, no analizable), plan completo aceptado, secciones/retención/copia de seguridad ausentes marcadas, conflicto de compartir en abierto datos personales, una publicación en revista que no se confunde con compartir en abierto, andamiajes solo con indicaciones que no cuentan como completos, campos de conjunto de datos/contacto vacíos tratados como ausentes, protecciones ante planes malformados y anulación de retención, esquemas de herramientas, scaffold→check→export de extremo a extremo, ramas de fallo y contrato del paquete.
 

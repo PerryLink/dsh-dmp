@@ -11,6 +11,8 @@
 
 *Ten-section scaffold with prompts, completeness and consistency checks (personal data vs open sharing, retention minimum, backup, repository/licence/DOI), and a Markdown export you can paste into the funder's form.*
 
+Last verified on DeepSeek Harness `dsh-v0.2.3-alpha.1` (2026-11-22).
+
 [简体中文](README-zh.md) · [Español](README-es.md) · [Português](README-pt.md) · [हिन्दी](README-hi.md)
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
@@ -25,7 +27,6 @@
 - **`dmp_scaffold`** — returns the ten sections (data description, collection, documentation, storage/backup, security, sharing, retention, roles, legal basis, costs) filled with **prompts**, not invented project content, plus optional dataset entries.
 - **`dmp_check`** — completeness (10 sections), dataset coverage (repository, licence, DOI), personal-data consistency (security and legal basis required; open sharing without de-identification is an error), retention below the configured minimum, storage without backup, missing contact.
 - **`dmp_export`** — Markdown (identity, dataset table, sections, issue table) + JSON check + SARIF 2.1.0.
-
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-dmp-flow-v5-dark.svg">
@@ -99,7 +100,6 @@ dsh plugin --profile <name> add @perrylink/dsh-research-core dsh-dmp
 dsh --profile <name> --dump-config | grep dsh-dmp
 ```
 
-
 > **Family-wide peer note:** `@perrylink/dsh-research-core` is declared as a peer for a single, uniform install contract across the research family, even though this package does not import it at runtime.
 
 ## Configuration
@@ -119,7 +119,6 @@ dsh --profile <name> --dump-config | grep dsh-dmp
 ![dsh-dmp tests: a real run of the plan/check spec — nine cases covering the ten-section scaffold, retention parsing, a complete plan, missing sections and the open-sharing conflict](docs/assets/dsh-dmp-demo.gif)
 
 *Animated: the real verbose `pnpm exec vitest run test/plan.spec.ts` output over the plan fixtures (no network; re-run 2026-11-21). The pass markers are omitted because the terminal font has no check-mark glyph; the case names and the summary lines are verbatim.*
-
 
 **15 tests**: scaffold (10 prompt sections), retention parsing (years, Chinese 年, months, unparseable), complete plan accepted, missing sections/retention/backup flagged, open-sharing-of-personal-data conflict, a journal publication not mistaken for open sharing, prompt-only scaffolds not counted as complete, empty dataset fields/contact treated as missing, malformed-plan and retention-override guards, tool schemas, scaffold→check→export end to end, failure branches, package contract.
 

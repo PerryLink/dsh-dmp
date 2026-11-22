@@ -11,6 +11,8 @@
 
 *दस खंडों वाला scaffold जिसमें prompts हैं, पूर्णता और संगति की जाँचें (व्यक्तिगत डेटा बनाम खुला साझाकरण, न्यूनतम retention, backup, repository/licence/DOI), और एक Markdown निर्यात जिसे आप funder के फ़ॉर्म में चिपका सकते हैं।*
 
+अंतिम सत्यापन: DeepSeek Harness `dsh-v0.2.3-alpha.1` (2026-11-22).
+
 [English](README.md) · [简体中文](README-zh.md) · [Español](README-es.md) · [Português](README-pt.md) · [हिन्दी](README-hi.md)
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
@@ -25,7 +27,6 @@
 - **`dmp_scaffold`** — दस खंड (डेटा विवरण, संग्रह, प्रलेखन, भंडारण/backup, सुरक्षा, साझाकरण, retention, भूमिकाएँ, कानूनी आधार, लागत) **prompts** से भरे हुए लौटाता है, परियोजना की गढ़ी हुई सामग्री से नहीं, साथ में वैकल्पिक dataset प्रविष्टियाँ।
 - **`dmp_check`** — पूर्णता (10 खंड), dataset कवरेज (repository, licence, DOI), व्यक्तिगत-डेटा संगति (सुरक्षा और कानूनी आधार आवश्यक; de-identification के बिना खुला साझाकरण error है), कॉन्फ़िगर किए गए न्यूनतम से नीचे retention, backup के बिना भंडारण, अनुपस्थित संपर्क।
 - **`dmp_export`** — Markdown (पहचान, dataset तालिका, खंड, समस्या तालिका) + JSON जाँच + SARIF 2.1.0।
-
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-dmp-flow-v5-dark.svg">
@@ -99,7 +100,6 @@ dsh plugin --profile <name> add @perrylink/dsh-research-core dsh-dmp
 dsh --profile <name> --dump-config | grep dsh-dmp
 ```
 
-
 > **पूरी family के लिए peer नोट:** `@perrylink/dsh-research-core` को पूरी शोध-परिवार में एक ही, एकरूप इंस्टॉल अनुबंध के लिए peer घोषित किया गया है, भले ही यह पैकेज रनटाइम पर उसे import नहीं करता।
 
 ## कॉन्फ़िगरेशन
@@ -119,7 +119,6 @@ dsh --profile <name> --dump-config | grep dsh-dmp
 ![dsh-dmp परीक्षण: plan/check spec का असली रन — नौ मामले जो दस-खंड scaffold, retention पार्सिंग, पूर्ण योजना, अनुपस्थित खंड और खुले साझाकरण के टकराव को कवर करते हैं](docs/assets/dsh-dmp-demo.gif)
 
 *एनिमेटेड: plan fixtures पर `pnpm exec vitest run test/plan.spec.ts` का असली verbose आउटपुट (कोई नेटवर्क नहीं; 2026-11-21 को दोबारा चलाया गया)। टर्मिनल फ़ॉन्ट में चेक-मार्क ग्लिफ़ न होने के कारण pass चिह्न हटाए गए हैं; केस नाम और सारांश पंक्तियाँ ज्यों की त्यों हैं।*
-
 
 **15 परीक्षण**: scaffold (10 prompt खंड), retention पार्सिंग (वर्ष, चीनी 年, महीने, अपार्सेबल), पूर्ण योजना स्वीकृत, अनुपस्थित खंड/retention/backup चिह्नित, व्यक्तिगत डेटा के खुले साझाकरण का टकराव, पत्रिका प्रकाशन को खुला साझाकरण न समझना, केवल-prompt scaffold को अपूर्ण गिनना, खाली dataset फ़ील्ड/संपर्क को अनुपस्थित मानना, विकृत योजना और retention-override गार्ड, टूल स्कीमा, scaffold→check→export end to end, विफलता शाखाएँ, पैकेज अनुबंध।
 

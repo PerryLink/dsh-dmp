@@ -11,6 +11,8 @@
 
 *Estrutura de dez seções com prompts, verificações de completude e consistência (dados pessoais versus compartilhamento aberto, retenção mínima, backup, repositório/licença/DOI) e uma exportação Markdown que você pode colar no formulário do financiador.*
 
+Última verificação: DeepSeek Harness `dsh-v0.2.3-alpha.1` (2026-11-22).
+
 [English](README.md) · [简体中文](README-zh.md) · [Español](README-es.md) · [Português](README-pt.md) · [हिन्दी](README-hi.md)
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
@@ -25,7 +27,6 @@
 - **`dmp_scaffold`** — devolve as dez seções (descrição dos dados, coleta, documentação, armazenamento/backup, segurança, compartilhamento, retenção, papéis, base legal, custos) preenchidas com **prompts**, não com conteúdo inventado do projeto, além de entradas opcionais de conjuntos de dados.
 - **`dmp_check`** — completude (10 seções), cobertura de conjuntos de dados (repositório, licença, DOI), consistência de dados pessoais (segurança e base legal obrigatórias; compartilhar em aberto sem desidentificação é erro), retenção abaixo do mínimo configurado, armazenamento sem backup, contato ausente.
 - **`dmp_export`** — Markdown (identidade, tabela de conjuntos de dados, seções, tabela de problemas) + verificação JSON + SARIF 2.1.0.
-
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-dmp-flow-v5-dark.svg">
@@ -99,7 +100,6 @@ dsh plugin --profile <name> add @perrylink/dsh-research-core dsh-dmp
 dsh --profile <name> --dump-config | grep dsh-dmp
 ```
 
-
 > **Nota de peer para toda a família:** `@perrylink/dsh-research-core` é declarado como peer para um contrato de instalação único e uniforme em toda a família de pesquisa, mesmo que este pacote não o importe em tempo de execução.
 
 ## Configuração
@@ -119,7 +119,6 @@ dsh --profile <name> --dump-config | grep dsh-dmp
 ![dsh-dmp testes: uma execução real da spec de plano/verificação — nove casos cobrindo a estrutura de dez seções, a análise de retenção, um plano completo, seções ausentes e o conflito de compartilhamento aberto](docs/assets/dsh-dmp-demo.gif)
 
 *Animado: a saída verbose real de `pnpm exec vitest run test/plan.spec.ts` sobre os fixtures do plano (sem rede; reexecutado em 2026-11-21). As marcas de aprovação foram omitidas porque a fonte do terminal não tem o glifo de check; os nomes dos casos e as linhas de resumo são literais.*
-
 
 **15 testes**: estrutura (10 seções com prompts), análise de retenção (anos, 年 chinês, meses, não analisável), plano completo aceito, seções/retenção/backup ausentes sinalizados, conflito de compartilhamento aberto de dados pessoais, publicação em periódico que não é confundida com compartilhamento aberto, estruturas só com prompts não contadas como completas, campos de conjunto de dados/contato vazios tratados como ausentes, proteções contra planos malformados e substituição de retenção, esquemas de ferramentas, scaffold→check→export de ponta a ponta, ramos de falha e contrato do pacote.
 

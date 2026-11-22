@@ -11,6 +11,8 @@
 
 *十节脚手架，每节带提示语；提供完整性与一致性检查（个人数据 vs 开放共享、最短保存期、备份、仓库/许可证/DOI），并导出可粘贴到资助方表格里的 Markdown。*
 
+最近一次核验：DeepSeek Harness `dsh-v0.2.3-alpha.1`（2026-11-22）。
+
 [English](README.md) · [Español](README-es.md) · [Português](README-pt.md) · [हिन्दी](README-hi.md)
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
@@ -25,7 +27,6 @@
 - **`dmp_scaffold`** — 返回十个章节（数据描述、收集、文档、存储/备份、安全、共享、保存、角色、法律依据、费用），用**提示语**填充，而不是编造项目内容；还可附加数据集条目。
 - **`dmp_check`** — 完整性（10 个章节）、数据集覆盖（仓库、许可证、DOI）、个人数据一致性（必须说明安全和法律依据；未去标识化就开放共享是错误）、保存期低于配置下限、有存储但无备份、缺少联系人。
 - **`dmp_export`** — Markdown（身份信息、数据集表、章节、问题表）+ JSON 检查结果 + SARIF 2.1.0。
-
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-dmp-flow-v5-dark.svg">
@@ -99,7 +100,6 @@ dsh plugin --profile <name> add @perrylink/dsh-research-core dsh-dmp
 dsh --profile <name> --dump-config | grep dsh-dmp
 ```
 
-
 > **家族统一 peer 说明：** 尽管本包运行时不 import，`@perrylink/dsh-research-core` 仍作为 peer 声明，以保证整个研究插件家族使用同一套安装契约。
 
 ## 配置
@@ -119,7 +119,6 @@ dsh --profile <name> --dump-config | grep dsh-dmp
 ![dsh-dmp 测试：计划/检查 spec 的真实运行 —— 九个用例覆盖十节脚手架、保存期解析、完整计划、缺失章节与开放共享冲突](docs/assets/dsh-dmp-demo.gif)
 
 *动图是 `pnpm exec vitest run test/plan.spec.ts` 的 verbose 真实输出，跑在计划 fixture 上（不联网；2026-11-21 复跑）。终端字体没有对勾字形，因此省去了通过标记；用例名与汇总行均为原样。*
-
 
 **15 个测试**：脚手架（10 个提示章节）、保存期解析（年、中文“年”、月、无法解析）、完整计划被接受、缺失章节/保存期/备份被标记、个人数据开放共享冲突、期刊论文不被误判为开放共享、只有提示语的脚手架不计为完整、空的数据集字段/联系人视为缺失、畸形计划与保存期覆盖参数的防护、工具 schema、scaffold→check→export 端到端、失败分支、包契约。
 
