@@ -7,6 +7,8 @@
 
 # dsh-dmp
 
+当前版本 `0.1.4`。
+
 **A data-management plan that says where the data lives, who can touch it, and what happens after the grant ends.**
 
 *Ten-section scaffold with prompts, completeness and consistency checks (personal data vs open sharing, retention minimum, backup, repository/licence/DOI), and a Markdown export you can paste into the funder's form.*
