@@ -1,6 +1,6 @@
 {
   "name": "dsh-dmp",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Data-management-plan tooling for DeepSeek Harness: a ten-section scaffold with prompts, completeness/consistency checks (datasets, personal data, open-sharing conflicts, retention minimum, backup, repository/license/DOI, contact), Markdown/JSON/SARIF export. Checks are internal consistency checks, not funder-template certification; no network, no file writes.",
   "author": "PerryLink contributors",
   "repository": {
